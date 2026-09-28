@@ -50,6 +50,12 @@
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
 
+### Deployment
+
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Oracle Cloud](https://img.shields.io/badge/Oracle_Cloud-FF0000?style=for-the-badge&logo=oracle&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
 ## 개발 목표
 
 웹에서 의심 메시지, URL, QR 코드, 이미지를 간단히 검사하고 위험 요인과 예방법을 함께 제공하는 경량형 스미싱 예방 시스템을 구현합니다.
