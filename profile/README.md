@@ -1,11 +1,11 @@
 # 스미싱 예방 교육 및 탐지 시스템
 
-**의심스러운 링크를 확인하고, 위험한 이유와 대응 방법까지 배우는 웹서비스**
+**의심스러운 링크를 확인하고, 위험한 이유와 대응 방법까지 배우는 스미싱 예방 서비스**
 
 한국교통대학교 컴퓨터소프트웨어학과 캡스톤디자인 프로젝트입니다.  
 사용자가 제출한 URL·문자 메시지·QR 이미지를 분석하고, 판단 근거와 예방 교육을 함께 제공합니다.
 
-[기능 명세](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/01_Feature_Specification.md) · [사용자 흐름](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/02_User_Flow.md) · [시스템 구조](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/03_System_Architecture.md) · [API 명세](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/05_API_Specification.md)
+[기능 명세](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/01_Feature_Specification.md) · [사용자 흐름](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/02_User_Flow.md) · [시스템 구조](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/03_System_Architecture.md) · [API 명세](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/05_API_Specification.md) · [UI 설계](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/06_UI_Design.md)
 
 > 현재 MVP 설계 및 개발 준비 단계입니다. 아래 내용은 구현 목표이며, 동작 중인 서비스나 검증된 탐지 성능을 의미하지 않습니다. 기술 세부사항은 팀 검토를 거쳐 조정합니다.
 
@@ -14,6 +14,12 @@
 택배 안내, 청첩장, 공공기관 알림처럼 보이는 메시지를 받았을 때 링크를 열기 전에 확인할 수 있는 서비스를 만듭니다. 분석 결과에서는 위험도와 함께 의심스러운 부분, 확인 방법, 이후 행동을 설명합니다.
 
 검사에서 끝나지 않고 관련 스미싱 사례와 퀴즈로 이어져, 사용자가 비슷한 상황을 스스로 판단할 수 있도록 돕는 것이 목표입니다.
+
+## 차별점과 서비스 모델
+
+이 프로젝트는 위험 여부만 보여주는 검사 도구가 아니라 **판정 근거 → 즉시 대응 → 관련 사례 학습 → 퀴즈**로 이어지는 예방 교육 흐름을 함께 제공합니다. 기본 검사와 공개 교육은 회원가입 없이 무료로 제공해 누구나 빠르게 이용할 수 있도록 설계합니다.
+
+후속 단계에서는 학교·기업·공공기관이 구성원을 초대하고 교육을 배정하며 이수 현황과 익명화된 학습 통계를 확인하는 **기관용 보안 교육 SaaS**를 핵심 사업 모델로 검토합니다. 검사 API 제공과 기관별 맞춤 콘텐츠·운영 지원도 확장 후보입니다. 실제 요금제, 결제와 청구 기능은 MVP에 포함하지 않습니다.
 
 ## 이번에 만드는 기능
 
@@ -36,9 +42,9 @@
 
 **MVP에 집중하는 기능:** URL·문자·QR 검사, 공통 결과 화면, 예방 교육, 퀴즈.
 
-**후속 개발 후보:** 문자 캡처 OCR, 외부 악성 URL 평판 조회, 결과 저장·공유, 사용자 피드백, 관리자 기능.
+**2차 개발 후보:** 개인 회원과 학습 기록, 기관 초대·교육 배정·이수 관리, 익명 통계, 문자 캡처 OCR, 결과 저장·공유, 사용자 피드백, 관리자 기능.
 
-**도전 기능:** 가짜 로그인 페이지의 동적 분석, 조작 이미지 판별, 회원·개인 검사 이력. 자체 AI 모델 학습은 현재 MVP 범위에 포함하지 않습니다.
+**도전 기능:** 가짜 로그인 페이지의 동적 분석, 조작 이미지 판별, 개인 검사 이력. 자체 AI 모델 학습은 현재 MVP 범위에 포함하지 않습니다.
 
 외부 평판 조회는 선택 기능으로 두고, 내부 규칙 분석만으로도 기본 검사가 가능하도록 설계합니다.
 
@@ -59,6 +65,7 @@ DB를 사용하는 구조로 결정했으며 실제 서버 설치와 운영 검�
 - 검사한 문자·URL·QR 이미지와 개인 검사 이력을 DB에 저장하지 않습니다.
 - QR 임시 이미지는 정상 처리 후 즉시 삭제하고, 실패 시에도 업로드 후 10분 이내 정리하는 정책으로 설계합니다.
 - 퀴즈는 서버에서 채점하지만 개인 답안과 점수 기록은 저장하지 않습니다.
+- 2차 개인 기록은 사용자가 명시적으로 선택한 비식별 결과 요약만 저장하며 기관에는 검사 원문을 제공하지 않습니다.
 - MVP 분석 서버는 의심 사이트에 직접 접속하거나 파일을 실행하지 않습니다.
 - 원문과 민감한 정보는 로그·이슈·PR에 올리지 않습니다.
 
@@ -96,5 +103,6 @@ DB를 사용하는 구조로 결정했으며 실제 서버 설치와 운영 검�
 - [03 · 시스템 아키텍처](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/03_System_Architecture.md)
 - [04 · DB 설계서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/04_Database_Design.md)
 - [05 · API 명세서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/05_API_Specification.md)
+- [06 · UI 설계서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/06_UI_Design.md)
 
 기능 범위와 계약의 상세 기준은 설계 문서를 따릅니다. 팀 작업 방식은 [협업 가이드](https://github.com/KNUT-Capstone-Design/.github/blob/main/CONTRIBUTING.md)를 참고합니다.
