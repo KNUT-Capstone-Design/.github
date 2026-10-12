@@ -5,12 +5,12 @@
 
 ## 팀원 소개
 
-| 이름 | 역할 |
-|---|---|
-| 이영수 | 미정 |
-| 민승호 | 미정 |
-| 임찬우 | 미정 |
-| 김흥원 | 미정 |
+| 이름 | 역할 | 주요 담당 |
+|---|---|---|
+| 이영수 | PM / Full-Stack / DevOps | 일정·문서 관리, 시스템 구조, FE·BE 연동, OCI·Docker·PostgreSQL 배포 |
+| 민승호 | Frontend | Next.js 화면 구현, 입력 검증, API 연동, 반응형 UI |
+| 임찬우 | Detection / Data | URL·문자 탐지 규칙, 위험 점수 기준, 테스트 데이터와 탐지 성능 평가 |
+| 김흥원 | Backend | FastAPI, 분석 API, QR 처리, DB 연동, 퀴즈 채점 API |
 
 ## 주요 기능
 
