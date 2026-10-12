@@ -104,5 +104,6 @@ DB를 사용하는 구조로 결정했으며 실제 서버 설치와 운영 검�
 - [04 · DB 설계서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/04_Database_Design.md)
 - [05 · API 명세서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/05_API_Specification.md)
 - [06 · UI 설계서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/06_UI_Design.md)
+- [07 · 테스트 계획서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/07_Test_Plan.md)
 
 기능 범위와 계약의 상세 기준은 설계 문서를 따릅니다. 팀 작업 방식은 [협업 가이드](https://github.com/KNUT-Capstone-Design/.github/blob/main/CONTRIBUTING.md)를 참고합니다.
