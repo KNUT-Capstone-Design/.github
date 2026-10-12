@@ -1,89 +1,100 @@
 # 스미싱 예방 교육 및 탐지 시스템
 
+**의심스러운 링크를 확인하고, 위험한 이유와 대응 방법까지 배우는 웹서비스**
+
 한국교통대학교 컴퓨터소프트웨어학과 캡스톤디자인 프로젝트입니다.  
-스미싱 예방 교육과 의심 메시지·URL·QR 코드·이미지 판별 기능을 결합한 웹 기반 보안 서비스입니다.
+사용자가 제출한 URL·문자 메시지·QR 이미지를 분석하고, 판단 근거와 예방 교육을 함께 제공합니다.
 
-## 팀원 소개
+[기능 명세](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/01_Feature_Specification.md) · [사용자 흐름](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/02_User_Flow.md) · [시스템 구조](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/03_System_Architecture.md) · [API 명세](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/05_API_Specification.md)
 
-| 이름 | 역할 | 주요 담당 |
-|---|---|---|
-| 이영수 | PM / Full-Stack / DevOps | 일정·문서 관리, 시스템 구조, FE·BE 연동, OCI·Docker·PostgreSQL 배포 |
-| 민승호 | Frontend | Next.js 화면 구현, 입력 검증, API 연동, 반응형 UI |
-| 임찬우 | Detection / Data | URL·문자 탐지 규칙, 위험 점수 기준, 테스트 데이터와 탐지 성능 평가 |
-| 김흥원 | Backend | FastAPI, 분석 API, QR 처리, DB 연동, 퀴즈 채점 API |
+> 현재 MVP 설계 및 개발 준비 단계입니다. 아래 내용은 구현 목표이며, 동작 중인 서비스나 검증된 탐지 성능을 의미하지 않습니다. 기술 세부사항은 팀 검토를 거쳐 조정합니다.
 
-## 주요 기능
+## 어떤 서비스인가요?
 
-- 네이버, 구글, 쿠팡 사칭 가짜 로그인 페이지 판별
-- 쿠팡·청첩장·택배 사칭 APK 설치 유도 메시지 탐지
-- 대출, 공공기관 사칭, 주식 리딩, 단체예약·술 구매 유도 URL 위험도 분석
-- QR 코드 속 URL 추출 및 위험도 검사
-- 조작 사진 판별
-- 스미싱 사례 기반 예방 교육 및 퀴즈
+택배 안내, 청첩장, 공공기관 알림처럼 보이는 메시지를 받았을 때 링크를 열기 전에 확인할 수 있는 서비스를 만듭니다. 분석 결과에서는 위험도와 함께 의심스러운 부분, 확인 방법, 이후 행동을 설명합니다.
 
-## 기술 스택
+검사에서 끝나지 않고 관련 스미싱 사례와 퀴즈로 이어져, 사용자가 비슷한 상황을 스스로 판단할 수 있도록 돕는 것이 목표입니다.
 
-### Frontend
+## 이번에 만드는 기능
 
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+- **URL 검사:** 주소와 도메인 특징, 다운로드 유도 등 위험 신호를 분석합니다.
+- **문자 검사:** 위험 문구와 패턴을 찾고, 포함된 URL을 함께 검사합니다.
+- **QR 검사:** 이미지에서 주소를 추출해 검사합니다. 추출된 링크는 자동으로 열지 않습니다.
+- **결과 안내:** 위험 등급·점수·판단 근거·권장 행동을 한 화면에 제공합니다.
+- **예방 교육:** 대표 유형 7개 이상의 사례와 예방·대응 방법을 제공합니다.
+- **퀴즈:** 로그인 없이 10문제를 풀고 최종 제출 후 정답과 해설을 확인합니다.
 
-### Backend
+이용 흐름은 **검사 유형 선택 → 자료 입력 → 분석 → 결과 확인 → 대응 방법·관련 교육**입니다.
 
-![Next.js API Routes](https://img.shields.io/badge/Next.js_API_Routes-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-5FA04E?style=for-the-badge&logo=nodedotjs&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+### 분석 결과는 이렇게 다룹니다
 
-### DevOps & Collaboration
+초기에는 설명 가능한 규칙 기반 분석을 사용합니다. 점수에 따라 안전·주의·위험을 표시하고, 확인된 중대한 위험 신호는 별도 근거와 함께 반영합니다. 점수는 악성일 확률이 아니며 배점과 기준은 평가 데이터를 통해 검증할 예정입니다.
 
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
-![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white)
+일부 분석이 실패하면 검사하지 못한 범위를 표시합니다. URL이 아닌 QR 데이터에는 안전 점수를 매기지 않고 ‘URL 분석 대상 아님’을 안내합니다. 위험 신호가 발견되지 않았더라도 대상의 안전을 보장하지 않습니다.
 
-### AI / 분석 기능 (예정)
+## 개발 범위
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
-![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)
+**MVP에 집중하는 기능:** URL·문자·QR 검사, 공통 결과 화면, 예방 교육, 퀴즈.
 
-### Deployment
+**후속 개발 후보:** 문자 캡처 OCR, 외부 악성 URL 평판 조회, 결과 저장·공유, 사용자 피드백, 관리자 기능.
 
-![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
-![Oracle Cloud](https://img.shields.io/badge/Oracle_Cloud-FF0000?style=for-the-badge&logo=oracle&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+**도전 기능:** 가짜 로그인 페이지의 동적 분석, 조작 이미지 판별, 회원·개인 검사 이력. 자체 AI 모델 학습은 현재 MVP 범위에 포함하지 않습니다.
 
-## 개발 목표
+외부 평판 조회는 선택 기능으로 두고, 내부 규칙 분석만으로도 기본 검사가 가능하도록 설계합니다.
 
-웹에서 의심 메시지, URL, QR 코드, 이미지를 간단히 검사하고 위험 요인과 예방법을 함께 제공하는 경량형 스미싱 예방 시스템을 구현합니다.
+## 기술 구성
 
-## 개발 일정 및 데드라인 계획
+- **Frontend — 제안:** Next.js, React, TypeScript, Tailwind CSS
+- **Backend — 제안:** Python, FastAPI, OpenCV 기반 QR 분석
+- **Database — 사용 결정:** 사용자 OCI 서버에서 Docker PostgreSQL 운영
+- **배포 — 제안:** FE는 Vercel, BE는 OCI의 Docker 컨테이너
+- **협업:** GitHub 저장소, Issues, Pull Requests, Markdown 설계 문서
 
-현재 5주차이며, 14주차까지 약 9주 동안 개발을 진행합니다.
+FE는 입력과 결과 화면을 담당하고, BE는 분석·점수 계산·교육 조회·퀴즈 채점을 담당합니다. PostgreSQL은 교육 사례, 예방수칙, 퀴즈 문제·선택지·정답·해설을 저장합니다. 탐지 규칙은 BE 저장소에서 버전 관리합니다.
 
-| 기간 | 주요 작업 | 산출물 / 데드라인 |
-|---|---|---|
-| 5~6주차 | 요구사항 분석, 역할 분담 | 프로젝트 기획서, 기능 명세서 |
-| 7주차 | 화면 설계 및 DB 설계, 기술 스택 선정 | 화면 흐름도, DB 설계서 |
-| 8주차 | 웹 페이지 기본 구조 및 회원/메인 화면 구현 | 기본 웹 UI |
-| 9주차 | URL·문자 메시지 경량 탐지 기능 구현 | URL/문자 위험도 분석 기능 |
-| 10주차 | QR 코드 분석 및 APK 설치 유도 탐지 기능 구현 | QR URL 추출 및 탐지 기능 |
-| 11주차 | 가짜 로그인 페이지·조작 이미지 판별 기능 구현 | 이미지/사칭 판별 기능 |
-| 12주차 | 예방 교육 콘텐츠 및 퀴즈 기능 구현 | 교육 페이지, 퀴즈 기능 |
-| 13주차 | 기능 통합, 테스트 및 오류 수정 | 통합 테스트 결과 |
-| 14주차 | 최종 발표 자료, 시연 영상 및 결과 보고서 작성 | 최종 발표 및 프로젝트 제출 |
+DB를 사용하는 구조로 결정했으며 실제 서버 설치와 운영 검증은 별도 개발 작업입니다.
 
-## 리스크 관리 계획
+## 데이터 처리 원칙
 
-| 리스크 | 영향 | 대응 방안 |
-|---|---|---|
-| 역할 분담 지연 | 개발 일정이 늦어질 수 있음 | 6주차까지 담당 기능을 확정하고 진행 상황을 주 1회 공유 |
-| 탐지 정확도 부족 | 잘못된 판별 결과가 나올 수 있음 | 초기에는 규칙 기반 경량 탐지를 적용하고, 결과를 ‘위험도’와 ‘참고용’으로 안내 |
-| 학습 데이터 부족 | AI 기반 이미지·문자 판별 구현이 어려움 | 공개 데이터셋 및 직접 수집한 예시 데이터를 활용하고, 부족한 기능은 규칙 기반으로 대체 |
-| 기능 범위 과다 | 모든 기능을 완성하지 못할 수 있음 | URL·문자 탐지를 핵심 기능으로 우선 구현하고, 이미지 판별은 보조 기능으로 개발 |
-| 팀원 간 일정 조율 어려움 | 회의·개발 진행이 지연될 수 있음 | GitHub, Notion, 카카오톡 등을 활용해 작업 내용과 일정을 공유 |
-| 보안 및 개인정보 문제 | 사용자 데이터 유출 가능성 | 실제 개인정보는 저장하지 않고, 업로드 파일과 검사 기록은 최소한으로 관리 |
-| 배포 및 시연 환경 오류 | 발표 시 서비스가 실행되지 않을 수 있음 | 발표 전 로컬 환경과 배포 환경에서 모두 테스트하고, 시연 영상 또는 화면 녹화를 백업으로 준비 |
+- 검사한 문자·URL·QR 이미지와 개인 검사 이력을 DB에 저장하지 않습니다.
+- QR 임시 이미지는 정상 처리 후 즉시 삭제하고, 실패 시에도 업로드 후 10분 이내 정리하는 정책으로 설계합니다.
+- 퀴즈는 서버에서 채점하지만 개인 답안과 점수 기록은 저장하지 않습니다.
+- MVP 분석 서버는 의심 사이트에 직접 접속하거나 파일을 실행하지 않습니다.
+- 원문과 민감한 정보는 로그·이슈·PR에 올리지 않습니다.
+
+## 팀원과 담당 업무
+
+- **이영수 · PM / Full-Stack / DevOps:** 일정·문서 관리, 시스템 구조, FE·BE 통합, OCI·Docker·PostgreSQL 배포
+- **민승호 · Frontend:** Next.js 화면 구현, 입력 검증, API 연동, 반응형 UI
+- **임찬우 · Detection / Data:** URL·문자 탐지 규칙, 위험 점수 기준, 테스트 데이터와 탐지 성능 평가
+- **김흥원 · Backend:** FastAPI, 분석 API, QR 처리, DB 연동, 교육 조회와 퀴즈 채점
+
+팀원 모두 자신의 기능 테스트, 코드 리뷰, 통합 시연과 발표 준비에 참여합니다.
+
+## 저장소 안내
+
+- [Frontend](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-FE): 화면과 사용자 상호작용, API 연동
+- [Backend](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-BE): 분석 로직, API, DB 및 배포 구성
+- [Docs](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs): 요구사항, 사용자 흐름, 시스템·DB·API 설계
+- [.github](https://github.com/KNUT-Capstone-Design/.github): 조직 소개와 공통 협업 안내
+
+## 개발 순서
+
+1. MVP·기술 구조·API 계약을 팀에서 검토합니다.
+2. 화면 설계, 테스트 기준, 담당 작업과 일정을 정합니다.
+3. URL 입력부터 실제 분석 결과 표시까지 먼저 연결합니다.
+4. 문자·QR 검사, DB 기반 교육·퀴즈로 확장합니다.
+5. 배포 환경에서 통합 테스트와 탐지 성능 평가를 진행합니다.
+6. 시연 영상과 최종 발표 자료를 준비합니다.
+
+주차별 일정과 마감일은 팀 합의 후 Docs 저장소에서 관리합니다.
+
+## 설계 문서
+
+- [01 · 기능 명세서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/01_Feature_Specification.md)
+- [02 · 사용자 흐름](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/02_User_Flow.md)
+- [03 · 시스템 아키텍처](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/03_System_Architecture.md)
+- [04 · DB 설계서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/04_Database_Design.md)
+- [05 · API 명세서](https://github.com/KNUT-Capstone-Design/KNUT-Capstone-Design-docs/blob/main/docs/05_API_Specification.md)
+
+기능 범위와 계약의 상세 기준은 설계 문서를 따릅니다. 팀 작업 방식은 [협업 가이드](https://github.com/KNUT-Capstone-Design/.github/blob/main/CONTRIBUTING.md)를 참고합니다.
